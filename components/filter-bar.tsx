@@ -8,6 +8,9 @@ type FilterBarProps = {
   categories: string[]
   selectedCategory: string
   onCategoryChange: (value: string) => void
+  hashtags: string[]
+  selectedHashtag: string
+  onHashtagChange: (value: string) => void
 }
 
 export function FilterBar({
@@ -16,10 +19,13 @@ export function FilterBar({
   categories,
   selectedCategory,
   onCategoryChange,
+  hashtags,
+  selectedHashtag,
+  onHashtagChange,
 }: FilterBarProps) {
   return (
     <div className="flex flex-col gap-5">
-      {/* Search */}
+      {/* 検索 */}
       <div className="relative max-w-sm">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#c5a84a]" />
         <input
@@ -40,20 +46,15 @@ export function FilterBar({
         )}
       </div>
 
-      {/* Categories */}
+      {/* カテゴリ（ageGroup） */}
       {categories.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => onCategoryChange("")}
-            className={`text-xs px-4 py-1.5 rounded-full transition-all font-medium ${
-              selectedCategory === ""
-                ? "bg-[#1e3a5f] text-[#f5f0e6]"
-                : "bg-white text-[#264a75] border border-[#ddd5c4] hover:border-[#1e3a5f] hover:text-[#1e3a5f]"
-            }`}
-            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+          <span
+            className="text-[10px] tracking-[0.3em] text-[#c5a84a] uppercase shrink-0 mr-1"
+            style={{ fontFamily: "var(--font-montserrat)" }}
           >
-            すべて
-          </button>
+            AGE
+          </span>
           {categories.map((cat) => (
             <button
               key={cat}
@@ -66,6 +67,32 @@ export function FilterBar({
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
               {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* マイ# ハッシュタグ */}
+      {hashtags.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className="text-[10px] tracking-[0.3em] text-[#c5a84a] uppercase shrink-0 mr-1"
+            style={{ fontFamily: "var(--font-montserrat)" }}
+          >
+            マイ#
+          </span>
+          {hashtags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => onHashtagChange(tag)}
+              className={`text-xs px-3 py-1 rounded-full transition-all font-medium ${
+                selectedHashtag === tag
+                  ? "bg-[#c5a84a] text-white"
+                  : "bg-white text-[#264a75] border border-[#ddd5c4] hover:border-[#c5a84a] hover:text-[#c5a84a]"
+              }`}
+              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            >
+              #{tag}
             </button>
           ))}
         </div>

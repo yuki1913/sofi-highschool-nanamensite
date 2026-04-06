@@ -28,6 +28,7 @@ export function MemberCard({ member, index, onOpenDetail }: MemberCardProps) {
           <img
             src={member.imageUrl}
             alt={member.name}
+            referrerPolicy="no-referrer"
             className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
@@ -40,11 +41,19 @@ export function MemberCard({ member, index, onOpenDetail }: MemberCardProps) {
             </span>
           </div>
         )}
-        {/* Age group badge */}
+        {/* Age group badge — U25:ゴールド / U20:ネイビー / その他:グレー */}
         {member.ageGroup && (
           <span
-            className="absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-full bg-[#1e3a5f]/80 text-[#f5f0e6] font-medium backdrop-blur-sm"
-            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            className="absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-full font-medium backdrop-blur-sm"
+            style={{
+              fontFamily: "var(--font-zen-maru-gothic)",
+              backgroundColor: member.ageGroup.includes("25")
+                ? "rgba(197,168,74,0.9)"
+                : member.ageGroup.includes("20")
+                  ? "rgba(30,58,95,0.85)"
+                  : "rgba(100,100,100,0.7)",
+              color: "#f5f0e6",
+            }}
           >
             {member.ageGroup}
           </span>
