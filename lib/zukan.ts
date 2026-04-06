@@ -1,3 +1,5 @@
+import { convertGoogleDriveUrl } from "./image-utils"
+
 export type Member = {
   id: string
   name: string        // A列
@@ -63,7 +65,7 @@ export async function getZukanItems(): Promise<Member[]> {
       career: row[10] ?? "",    // K列
       // row[11] はL列（スキップ）
       url: row[12] ?? "",       // M列
-      imageUrl: row[13] ?? "",  // N列
+      imageUrl: convertGoogleDriveUrl(row[13] ?? ""),  // N列 - Googleドライブリンクを変換
     }))
     .filter((item) => item.name)
 }
