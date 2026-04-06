@@ -11,6 +11,12 @@
     "noto",
     "montserrat",
     "nextjs",
-    "sitemap"
+    "sitemap",
+    "Turbopack",
+    "Maru",
+    "nanamensite",
+    "dbname",
+    "sslmode",
+    "TIMESTAMPTZ"
   ]
 }
