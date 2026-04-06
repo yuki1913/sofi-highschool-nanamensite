@@ -19,36 +19,36 @@ export function FilterBar({
 }: FilterBarProps) {
   return (
     <div className="flex flex-col gap-5">
-      {/* 検索 */}
+      {/* Search */}
       <div className="relative max-w-sm">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#c4a882]" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#c5a84a]" />
         <input
           type="text"
           placeholder="名前・紹介で検索"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full bg-white rounded-full border border-[#e8d5be] py-2.5 pl-10 pr-9 text-sm text-[#2d1f0e] placeholder:text-[#c4a882] outline-none focus:border-[#f07840] transition-colors"
+          className="w-full bg-white rounded-full border border-[#ddd5c4] py-2.5 pl-10 pr-9 text-sm text-[#1e3a5f] placeholder:text-[#c5a84a]/70 outline-none focus:border-[#1e3a5f] transition-colors"
           style={{ fontFamily: "var(--font-noto-sans-jp)" }}
         />
         {searchQuery && (
           <button
             onClick={() => onSearchChange("")}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#c4a882] hover:text-[#f07840] transition-colors"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#c5a84a] hover:text-[#1e3a5f] transition-colors"
           >
             <X className="h-3.5 w-3.5" />
           </button>
         )}
       </div>
 
-      {/* カテゴリ */}
+      {/* Categories */}
       {categories.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => onCategoryChange("")}
             className={`text-xs px-4 py-1.5 rounded-full transition-all font-medium ${
               selectedCategory === ""
-                ? "bg-[#f07840] text-white"
-                : "bg-white text-[#9a7250] border border-[#e8d5be] hover:border-[#f07840] hover:text-[#f07840]"
+                ? "bg-[#1e3a5f] text-[#f5f0e6]"
+                : "bg-white text-[#264a75] border border-[#ddd5c4] hover:border-[#1e3a5f] hover:text-[#1e3a5f]"
             }`}
             style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
           >
@@ -60,8 +60,8 @@ export function FilterBar({
               onClick={() => onCategoryChange(cat)}
               className={`text-xs px-4 py-1.5 rounded-full transition-all font-medium ${
                 selectedCategory === cat
-                  ? "bg-[#f07840] text-white"
-                  : "bg-white text-[#9a7250] border border-[#e8d5be] hover:border-[#f07840] hover:text-[#f07840]"
+                  ? "bg-[#1e3a5f] text-[#f5f0e6]"
+                  : "bg-white text-[#264a75] border border-[#ddd5c4] hover:border-[#1e3a5f] hover:text-[#1e3a5f]"
               }`}
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
