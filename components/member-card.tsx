@@ -1,103 +1,126 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
-
-export type Member = {
-  id: string
-  name: string
-  shortIntro: string
-  category: string
-  fullIntro: string
-}
+import Image from "next/image"
+import type { Member } from "@/lib/zukan"
 
 type MemberCardProps = {
   member: Member
   index: number
+  onOpenDetail: (member: Member) => void
 }
 
-export function MemberCard({ member, index }: MemberCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+export function MemberCard({ member, index, onOpenDetail }: MemberCardProps) {
+  const hashtags = member.hashtags
+    ? member.hashtags.split(/[,、\s]+/).filter(Boolean)
+    : []
 
   return (
     <article
-      className="bg-white rounded-2xl p-6 lg:p-7 flex flex-col gap-4 animate-fade-in-up border border-[#ddd5c4] hover:border-[#c5a84a]/50 hover:shadow-md transition-all duration-300"
+      className="bg-white rounded-2xl overflow-hidden flex flex-col animate-fade-in-up border border-[#ddd5c4] hover:border-[#c5a84a]/60 hover:shadow-md transition-all duration-300 cursor-pointer group"
       style={{
         animationDelay: `${index * 50}ms`,
         boxShadow: "0 2px 12px rgba(30, 58, 95, 0.06)",
       }}
+      onClick={() => onOpenDetail(member)}
     >
-      {/* Top: Number + Category */}
-      <div className="flex items-center justify-between">
-        <span
-          className="text-[10px] tracking-[0.45em] text-[#c5a84a] tabular-nums font-semibold"
-          style={{ fontFamily: "var(--font-montserrat)" }}
-        >
-          {String(member.id).padStart(2, "0")}
-        </span>
-        {member.category && (
+      {/* Photo */}
+      <div className="relative w-full aspect-[4/3] bg-[#eee8dc] overflow-hidden">
+        {member.imageUrl ? (
+          <Image
+            src={member.imageUrl}
+            alt={member.name}
+            fill
+            className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span
+              className="text-4xl font-medium text-[#1e3a5f]/30"
+              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            >
+              {member.name.charAt(0)}
+            </span>
+          </div>
+        )}
+        {/* Age group badge */}
+        {member.ageGroup && (
           <span
-            className="text-[10px] px-3 py-1 rounded-full bg-[#1e3a5f]/10 text-[#1e3a5f] font-medium"
+            className="absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-full bg-[#1e3a5f]/80 text-[#f5f0e6] font-medium backdrop-blur-sm"
             style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
           >
-            {member.category}
+            {member.ageGroup}
           </span>
         )}
       </div>
 
-      {/* Name */}
-      <div>
-        <h2
-          className="text-xl lg:text-2xl font-medium leading-tight text-[#1e3a5f]"
-          style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
-        >
-          {member.name}
-        </h2>
-        {member.shortIntro && (
-          <p className="mt-1.5 text-[13px] leading-6 text-[#264a75]">
-            {member.shortIntro}
+      {/* Body */}
+      <div className="p-4 flex flex-col gap-3 flex-1">
+        {/* Name + location */}
+        <div>
+          <h2
+            className="text-lg font-medium leading-tight text-[#1e3a5f]"
+            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+          >
+            {member.name}
+          </h2>
+          <div className="mt-1 flex items-center gap-3 text-[11px] text-[#264a75]">
+            {member.location && (
+              <span className="flex items-center gap-1">
+                <span className="text-[#c5a84a]">&#9679;</span>
+                {member.location}
+              </span>
+            )}
+            {member.university && (
+              <span className="truncate">{member.university}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Motto */}
+        {member.motto && (
+          <p
+            className="text-[12px] leading-6 text-[#1e3a5f] italic line-clamp-2"
+            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+          >
+            &ldquo;{member.motto}&rdquo;
           </p>
         )}
-      </div>
 
-      {/* Divider */}
-      <div className="border-t border-[#c5a84a]/20" />
+        {/* Skills */}
+        {member.skills && (
+          <p className="text-[11px] leading-5 text-[#264a75] line-clamp-2">
+            {member.skills}
+          </p>
+        )}
 
-      {/* Content */}
-      {member.fullIntro && (
-        <div>
-          <div
-            className={`overflow-hidden transition-all duration-300 ease-in-out ${
-              isExpanded ? "max-h-[800px]" : "max-h-[72px]"
-            }`}
-          >
-            <p className="text-[13px] leading-7 text-[#264a75] whitespace-pre-wrap">
-              {member.fullIntro}
-            </p>
-          </div>
-
-          {member.fullIntro.length > 80 && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-3 flex items-center gap-1.5 group"
-            >
-              <span className="w-6 h-6 rounded-full bg-[#1e3a5f]/10 flex items-center justify-center group-hover:bg-[#c5a84a]/20 transition-colors">
-                {isExpanded ? (
-                  <ChevronUp className="w-3 h-3 text-[#1e3a5f]" />
-                ) : (
-                  <ChevronDown className="w-3 h-3 text-[#1e3a5f]" />
-                )}
-              </span>
+        {/* Hashtags */}
+        {hashtags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-auto pt-2 border-t border-[#ddd5c4]/60">
+            {hashtags.slice(0, 4).map((tag, i) => (
               <span
-                className="text-[11px] text-[#1e3a5f] font-medium group-hover:text-[#c5a84a] transition-colors"
-                style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+                key={i}
+                className="text-[10px] px-2 py-0.5 rounded-full bg-[#1e3a5f]/8 text-[#1e3a5f] font-medium"
+                style={{ fontFamily: "var(--font-zen-maru-gothic)", background: "rgba(30,58,95,0.07)" }}
               >
-                {isExpanded ? "閉じる" : "もっと読む"}
+                #{tag}
               </span>
-            </button>
-          )}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+
+        {/* View button */}
+        <button
+          className="mt-2 w-full py-2 rounded-full border border-[#c5a84a] text-[#c5a84a] text-xs font-medium hover:bg-[#c5a84a] hover:text-white transition-all duration-200"
+          style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+          onClick={(e) => {
+            e.stopPropagation()
+            onOpenDetail(member)
+          }}
+        >
+          ナナメンビュー
+        </button>
+      </div>
     </article>
   )
 }

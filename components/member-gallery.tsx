@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react"
 import { Loader2, AlertCircle } from "lucide-react"
 import Image from "next/image"
 import { FilterBar } from "@/components/filter-bar"
-import { MemberCard, type Member } from "@/components/member-card"
+import { MemberCard } from "@/components/member-card"
+import { MemberDetailModal } from "@/components/member-detail-modal"
+import type { Member } from "@/lib/zukan"
 
 export function MemberGallery() {
   const [members, setMembers] = useState<Member[]>([])
@@ -12,6 +14,7 @@ export function MemberGallery() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -33,20 +36,25 @@ export function MemberGallery() {
     fetchMembers()
   }, [])
 
+  // Use ageGroup as the category filter
   const categories = useMemo(() => {
-    const set = new Set(members.map((m) => m.category).filter(Boolean))
+    const set = new Set(members.map((m) => m.ageGroup).filter(Boolean))
     return Array.from(set)
   }, [members])
 
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
+      const q = searchQuery.toLowerCase()
       const matchesSearch =
         searchQuery === "" ||
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.shortIntro.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.fullIntro.toLowerCase().includes(searchQuery.toLowerCase())
+        member.name.toLowerCase().includes(q) ||
+        member.location.toLowerCase().includes(q) ||
+        member.university.toLowerCase().includes(q) ||
+        member.skills.toLowerCase().includes(q) ||
+        member.motto.toLowerCase().includes(q) ||
+        member.hashtags.toLowerCase().includes(q)
       const matchesCategory =
-        selectedCategory === "" || member.category === selectedCategory
+        selectedCategory === "" || member.ageGroup === selectedCategory
       return matchesSearch && matchesCategory
     })
   }, [members, searchQuery, selectedCategory])
@@ -54,7 +62,7 @@ export function MemberGallery() {
   return (
     <div className="min-h-screen bg-[#f5f0e6] text-[#1e3a5f]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#f5f0e6]/95 backdrop-blur-sm border-b border-[#ddd5c4]">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#f5f0e6]/95 backdrop-blur-sm border-b border-[#ddd5c4]">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
           <a
             href="https://sofi-highschool.studio.site/"
@@ -67,6 +75,7 @@ export function MemberGallery() {
               alt="SOFI高等学院"
               width={40}
               height={40}
+              style={{ width: "auto", height: "40px" }}
               className="shrink-0"
             />
             <span
@@ -117,10 +126,10 @@ export function MemberGallery() {
       </section>
 
       {/* Filter & Content */}
-      <main className="max-w-[1280px] mx-auto px-6 lg:px-12 py-12 lg:py-16">
+      <main className="max-w-[1280px] mx-auto px-6 lg:px-12 py-8 lg:py-12">
         {/* Filter Bar */}
         {!isLoading && !error && members.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-8">
             <FilterBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -171,9 +180,14 @@ export function MemberGallery() {
 
         {/* Card Grid */}
         {!isLoading && !error && filteredMembers.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredMembers.map((member, index) => (
-              <MemberCard key={member.id} member={member} index={index} />
+              <MemberCard
+                key={member.id}
+                member={member}
+                index={index}
+                onOpenDetail={setSelectedMember}
+              />
             ))}
           </div>
         )}
@@ -188,6 +202,7 @@ export function MemberGallery() {
               alt="SOFI高等学院"
               width={32}
               height={32}
+              style={{ width: "auto", height: "32px" }}
               className="shrink-0"
             />
             <span
@@ -213,6 +228,12 @@ export function MemberGallery() {
           </div>
         </div>
       </footer>
+
+      {/* Detail Modal */}
+      <MemberDetailModal
+        member={selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
     </div>
   )
 }
