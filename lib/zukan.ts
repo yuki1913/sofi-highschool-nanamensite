@@ -15,11 +15,15 @@ export type ZukanItem = {
     const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
     const range = process.env.GOOGLE_SHEETS_RANGE ?? "シート1!A2:E1000";
   
-    if (!apiKey || !spreadsheetId) {
+  if (!apiKey || !spreadsheetId) {
       throw new Error("環境変数が不足しています。");
     }
-  
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
+
+    // Remove trailing slash from spreadsheetId if present
+    const cleanSpreadsheetId = spreadsheetId.replace(/\/+$/, '');
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${cleanSpreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
+
   
     const res = await fetch(url, {
       next: { revalidate: 60 },
