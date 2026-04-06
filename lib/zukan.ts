@@ -25,7 +25,11 @@ type GoogleSheetsResponse = {
 export async function getZukanItems(): Promise<Member[]> {
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY
   const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID
-  const range = process.env.GOOGLE_SHEETS_RANGE ?? "ナナメンデータ!A:N"
+  // 環境変数が A:M になっている場合でも A:N を使うようフォールバック
+  const envRange = process.env.GOOGLE_SHEETS_RANGE
+  const range = (envRange && envRange.includes("A:M")) 
+    ? envRange.replace("A:M", "A:N") 
+    : (envRange ?? "ナナメンデータ!A:N")
 
   if (!apiKey || !spreadsheetId) {
     throw new Error("環境変数が不足しています。")
