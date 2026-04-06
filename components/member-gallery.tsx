@@ -15,6 +15,7 @@ export function MemberGallery() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [selectedHashtag, setSelectedHashtag] = useState("")
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -36,9 +37,19 @@ export function MemberGallery() {
     fetchMembers()
   }, [])
 
-  // Use ageGroup as the category filter
   const categories = useMemo(() => {
     const set = new Set(members.map((m) => m.ageGroup).filter(Boolean))
+    return Array.from(set)
+  }, [members])
+
+  // J列のハッシュタグを分割・重複除去して一覧化
+  const allHashtags = useMemo(() => {
+    const set = new Set<string>()
+    members.forEach((m) => {
+      if (m.hashtags) {
+        m.hashtags.split(/[,、\s]+/).filter(Boolean).forEach((tag) => set.add(tag))
+      }
+    })
     return Array.from(set)
   }, [members])
 
@@ -55,9 +66,14 @@ export function MemberGallery() {
         member.hashtags.toLowerCase().includes(q)
       const matchesCategory =
         selectedCategory === "" || member.ageGroup === selectedCategory
-      return matchesSearch && matchesCategory
+      const memberTags = member.hashtags
+        ? member.hashtags.split(/[,、\s]+/).filter(Boolean)
+        : []
+      const matchesHashtag =
+        selectedHashtag === "" || memberTags.includes(selectedHashtag)
+      return matchesSearch && matchesCategory && matchesHashtag
     })
-  }, [members, searchQuery, selectedCategory])
+  }, [members, searchQuery, selectedCategory, selectedHashtag])
 
   return (
     <div className="min-h-screen bg-[#f5f0e6] text-[#1e3a5f]">
@@ -135,7 +151,10 @@ export function MemberGallery() {
               onSearchChange={setSearchQuery}
               categories={categories}
               selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
+              onCategoryChange={(cat) => setSelectedCategory(cat === selectedCategory ? "" : cat)}
+              hashtags={allHashtags}
+              selectedHashtag={selectedHashtag}
+              onHashtagChange={(tag) => setSelectedHashtag(tag === selectedHashtag ? "" : tag)}
             />
           </div>
         )}
