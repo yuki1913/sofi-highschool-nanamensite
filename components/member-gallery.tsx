@@ -89,49 +89,28 @@ export function MemberGallery() {
 
       {/* Hero Section */}
       <section className="pt-16">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-12 pt-16 pb-12 lg:pt-24 lg:pb-16">
-          {/* Label */}
-          <p
-            className="text-[10px] tracking-[0.5em] text-[#c5a84a] uppercase mb-6 font-semibold"
-            style={{ fontFamily: "var(--font-montserrat)" }}
-          >
-            SOFI HIGH SCHOOL
-          </p>
-
-          {/* Main Title */}
-          <h1
-            className="text-[clamp(44px,8vw,96px)] font-medium leading-tight text-[#1e3a5f] mb-2"
-            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
-          >
-            ナナメンを
-          </h1>
-          <h1
-            className="text-[clamp(44px,8vw,96px)] font-medium leading-tight mb-10"
-            style={{ fontFamily: "var(--font-zen-maru-gothic)", color: "#c5a84a" }}
-          >
-            紹介します
-          </h1>
-
-          {/* Description */}
-          <div className="flex flex-col sm:flex-row sm:items-end gap-6">
-            <p className="max-w-md text-sm leading-7 text-[#264a75]">
-              SOFI高等学院のスタッフ・教員を紹介します。
-              <br />
-              生徒と斜めの関係で向き合う、ナナメンたちです。
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-12 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-baseline gap-4">
+            <h1
+              className="text-2xl font-medium text-[#1e3a5f]"
+              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            >
+              ナナメンを
+              <span className="ml-2" style={{ color: "#c5a84a" }}>紹介します</span>
+            </h1>
+            <p className="hidden sm:block text-xs text-[#264a75]">
+              生徒と斜めの関係で向き合うSOFIのスタッフ・教員
             </p>
-            {!isLoading && !error && members.length > 0 && (
-              <div className="sm:ml-auto shrink-0">
-                <span className="inline-flex items-center gap-2 bg-white rounded-full px-5 py-2 text-sm font-medium text-[#1e3a5f] border border-[#ddd5c4]">
-                  <span className="w-2 h-2 rounded-full bg-[#c5a84a]" />
-                  <span style={{ fontFamily: "var(--font-zen-maru-gothic)" }}>
-                    {members.length}名のナナメン
-                  </span>
-                </span>
-              </div>
-            )}
           </div>
+          {!isLoading && !error && members.length > 0 && (
+            <span className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 text-xs font-medium text-[#1e3a5f] border border-[#ddd5c4] shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#c5a84a]" />
+              <span style={{ fontFamily: "var(--font-zen-maru-gothic)" }}>
+                {members.length}名のナナメン
+              </span>
+            </span>
+          )}
         </div>
-
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12">
           <div className="border-t border-[#c5a84a]/30" />
         </div>
