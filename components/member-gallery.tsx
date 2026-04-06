@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Loader2, AlertCircle } from "lucide-react"
+import { Loader2, AlertCircle, LogOut } from "lucide-react"
 import Image from "next/image"
 import { FilterBar } from "@/components/filter-bar"
 import { MemberCard } from "@/components/member-card"
 import { MemberDetailModal } from "@/components/member-detail-modal"
+import { logout } from "@/app/actions/auth"
 import type { Member } from "@/lib/zukan"
 
 export function MemberGallery() {
@@ -101,13 +102,24 @@ export function MemberGallery() {
               SOFI高等学院
             </span>
           </a>
-          <nav className="hidden sm:flex items-center">
+          <nav className="flex items-center gap-3">
             <span
-              className="text-xs px-4 py-1.5 rounded-full bg-[#1e3a5f] text-[#f5f0e6] font-medium"
+              className="hidden sm:inline text-xs px-4 py-1.5 rounded-full bg-[#1e3a5f] text-[#f5f0e6] font-medium"
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
               ナナメン紹介
             </span>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="flex items-center gap-1.5 text-xs text-[#9a7250] hover:text-[#1e3a5f] transition-colors px-2 py-1.5 rounded-full hover:bg-[#ddd5c4]/40"
+                style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+                title="ログアウト"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">ログアウト</span>
+              </button>
+            </form>
           </nav>
         </div>
       </header>
