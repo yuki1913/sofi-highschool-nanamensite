@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react"
-import Image from "next/image"
 import { X, MapPin, GraduationCap, ExternalLink } from "lucide-react"
 import type { Member } from "@/lib/zukan"
 
@@ -63,12 +62,10 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
         {/* Photo header */}
         <div className="relative w-full aspect-[16/7] bg-[#eee8dc] overflow-hidden rounded-t-3xl">
           {member.imageUrl ? (
-            <Image
+            <img
               src={member.imageUrl}
               alt={member.name}
-              fill
-              className="object-cover object-top"
-              sizes="(max-width: 768px) 100vw, 672px"
+              className="absolute inset-0 w-full h-full object-cover object-top"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-[#1e3a5f]/10">

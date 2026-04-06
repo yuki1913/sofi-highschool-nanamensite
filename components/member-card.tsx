@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import type { Member } from "@/lib/zukan"
 
 type MemberCardProps = {
@@ -26,12 +25,10 @@ export function MemberCard({ member, index, onOpenDetail }: MemberCardProps) {
       {/* Photo */}
       <div className="relative w-full aspect-[4/3] bg-[#eee8dc] overflow-hidden">
         {member.imageUrl ? (
-          <Image
+          <img
             src={member.imageUrl}
             alt={member.name}
-            fill
-            className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
