@@ -20,7 +20,7 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
     return { error: "パスワードを入力してください。", field: "password" }
   }
 
-  const user = getUserByUsername(username.trim())
+  const user = await getUserByUsername(username.trim())
   // ユーザー不在でも同じエラーを返す（存在確認を防ぐ）
   if (!user) {
     return { error: "ユーザー名またはパスワードが正しくありません。" }
@@ -66,13 +66,13 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
     return { error: "パスワードが一致しません。", field: "confirmPassword" }
   }
 
-  const existing = getUserByUsername(username.trim())
+  const existing = await getUserByUsername(username.trim())
   if (existing) {
     return { error: "このユーザー名はすでに使用されています。", field: "username" }
   }
 
   const { hash, salt } = await hashPassword(password)
-  const userId = createUser(username.trim(), hash, salt)
+  const userId = await createUser(username.trim(), hash, salt)
 
   const { cookie, expires } = await createSession(userId)
   const cookieStore = await cookies()
