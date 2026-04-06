@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { Loader2, AlertCircle } from "lucide-react"
+import Image from "next/image"
 import { FilterBar } from "@/components/filter-bar"
-import { MemberCard, type Member } from "@/components/member-card"
+import { MemberCard } from "@/components/member-card"
+import { MemberDetailModal } from "@/components/member-detail-modal"
+import type { Member } from "@/lib/zukan"
 
 export function MemberGallery() {
   const [members, setMembers] = useState<Member[]>([])
@@ -11,6 +14,7 @@ export function MemberGallery() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -32,28 +36,33 @@ export function MemberGallery() {
     fetchMembers()
   }, [])
 
+  // Use ageGroup as the category filter
   const categories = useMemo(() => {
-    const set = new Set(members.map((m) => m.category).filter(Boolean))
+    const set = new Set(members.map((m) => m.ageGroup).filter(Boolean))
     return Array.from(set)
   }, [members])
 
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
+      const q = searchQuery.toLowerCase()
       const matchesSearch =
         searchQuery === "" ||
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.shortIntro.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.fullIntro.toLowerCase().includes(searchQuery.toLowerCase())
+        member.name.toLowerCase().includes(q) ||
+        member.location.toLowerCase().includes(q) ||
+        member.university.toLowerCase().includes(q) ||
+        member.skills.toLowerCase().includes(q) ||
+        member.motto.toLowerCase().includes(q) ||
+        member.hashtags.toLowerCase().includes(q)
       const matchesCategory =
-        selectedCategory === "" || member.category === selectedCategory
+        selectedCategory === "" || member.ageGroup === selectedCategory
       return matchesSearch && matchesCategory
     })
   }, [members, searchQuery, selectedCategory])
 
   return (
-    <div className="min-h-screen bg-[#faf0e4] text-[#2d1f0e]">
-      {/* ─── ヘッダー ─── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#faf0e4]/95 backdrop-blur-sm border-b border-[#e8d5be]">
+    <div className="min-h-screen bg-[#f5f0e6] text-[#1e3a5f]">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#f5f0e6]/95 backdrop-blur-sm border-b border-[#ddd5c4]">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
           <a
             href="https://sofi-highschool.studio.site/"
@@ -61,16 +70,16 @@ export function MemberGallery() {
             rel="noopener noreferrer"
             className="flex items-center gap-3 group"
           >
-            <div className="w-8 h-8 rounded-full bg-[#2d1f0e] flex items-center justify-center shrink-0">
-              <span
-                className="text-[7px] font-bold text-[#faf0e4] tracking-wider"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                SOFI
-              </span>
-            </div>
+            <Image
+              src="/images/sofi-logo.png"
+              alt="SOFI高等学院"
+              width={40}
+              height={40}
+              style={{ width: "auto", height: "40px" }}
+              className="shrink-0"
+            />
             <span
-              className="text-sm font-medium text-[#2d1f0e] group-hover:text-[#f07840] transition-colors"
+              className="text-sm font-medium text-[#1e3a5f] group-hover:text-[#c5a84a] transition-colors"
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
               SOFI高等学院
@@ -78,7 +87,7 @@ export function MemberGallery() {
           </a>
           <nav className="hidden sm:flex items-center">
             <span
-              className="text-xs px-4 py-1.5 rounded-full bg-[#f07840] text-white font-medium"
+              className="text-xs px-4 py-1.5 rounded-full bg-[#1e3a5f] text-[#f5f0e6] font-medium"
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
               ナナメン紹介
@@ -87,61 +96,40 @@ export function MemberGallery() {
         </div>
       </header>
 
-      {/* ─── ヒーロー ─── */}
+      {/* Hero Section */}
       <section className="pt-16">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-12 pt-16 pb-12 lg:pt-24 lg:pb-16">
-          {/* ラベル */}
-          <p
-            className="text-[10px] tracking-[0.5em] text-[#9a7250] uppercase mb-6"
-            style={{ fontFamily: "var(--font-montserrat)" }}
-          >
-            SOFI高等学院
-          </p>
-
-          {/* メインタイトル */}
-          <h1
-            className="text-[clamp(44px,8vw,96px)] font-medium leading-tight text-[#2d1f0e] mb-2"
-            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
-          >
-            ナナメンを
-          </h1>
-          <h1
-            className="text-[clamp(44px,8vw,96px)] font-medium leading-tight mb-10"
-            style={{ fontFamily: "var(--font-zen-maru-gothic)", color: "#f07840" }}
-          >
-            紹介します
-          </h1>
-
-          {/* 説明文 */}
-          <div className="flex flex-col sm:flex-row sm:items-end gap-6">
-            <p className="max-w-md text-sm leading-7 text-[#5c3d20]">
-              SOFI高等学院のスタッフ・教員を紹介します。
-              <br />
-              生徒と斜めの関係で向き合う、ナナメンたちです。
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-12 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-baseline gap-4">
+            <h1
+              className="text-2xl font-medium text-[#1e3a5f]"
+              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            >
+              ナナメンを
+              <span className="ml-2" style={{ color: "#c5a84a" }}>紹介します</span>
+            </h1>
+            <p className="hidden sm:block text-xs text-[#264a75]">
+              生徒と斜めの関係で向き合うSOFIのスタッフ・教員
             </p>
-            {!isLoading && !error && members.length > 0 && (
-              <div className="sm:ml-auto shrink-0">
-                <span className="inline-flex items-center gap-2 bg-white rounded-full px-5 py-2 text-sm font-medium text-[#5c3d20] border border-[#e8d5be]">
-                  <span className="w-2 h-2 rounded-full bg-[#f07840]" />
-                  <span style={{ fontFamily: "var(--font-zen-maru-gothic)" }}>
-                    {members.length}名のナナメン
-                  </span>
-                </span>
-              </div>
-            )}
           </div>
+          {!isLoading && !error && members.length > 0 && (
+            <span className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 text-xs font-medium text-[#1e3a5f] border border-[#ddd5c4] shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#c5a84a]" />
+              <span style={{ fontFamily: "var(--font-zen-maru-gothic)" }}>
+                {members.length}名のナナメン
+              </span>
+            </span>
+          )}
         </div>
-
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12">
-          <div className="border-t border-[#e8d5be]" />
+          <div className="border-t border-[#c5a84a]/30" />
         </div>
       </section>
 
-      {/* ─── フィルター & コンテンツ ─── */}
-      <main className="max-w-[1280px] mx-auto px-6 lg:px-12 py-12 lg:py-16">
-        {/* フィルターバー */}
+      {/* Filter & Content */}
+      <main className="max-w-[1280px] mx-auto px-6 lg:px-12 py-8 lg:py-12">
+        {/* Filter Bar */}
         {!isLoading && !error && members.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-8">
             <FilterBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -152,14 +140,14 @@ export function MemberGallery() {
           </div>
         )}
 
-        {/* ローディング */}
+        {/* Loading */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f07840]/10 flex items-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-[#f07840]" />
+            <div className="w-12 h-12 rounded-full bg-[#1e3a5f]/10 flex items-center justify-center">
+              <Loader2 className="h-5 w-5 animate-spin text-[#1e3a5f]" />
             </div>
             <span
-              className="text-[10px] tracking-[0.4em] text-[#9a7250] uppercase"
+              className="text-[10px] tracking-[0.4em] text-[#c5a84a] uppercase font-semibold"
               style={{ fontFamily: "var(--font-montserrat)" }}
             >
               LOADING
@@ -167,66 +155,85 @@ export function MemberGallery() {
           </div>
         )}
 
-        {/* エラー */}
+        {/* Error */}
         {error && (
-          <div className="flex items-start gap-3 bg-white rounded-2xl border border-[#e8d5be] p-6">
-            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-[#f07840]" />
+          <div className="flex items-start gap-3 bg-white rounded-2xl border border-[#ddd5c4] p-6">
+            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-[#1e3a5f]" />
             <div>
-              <p className="text-sm font-medium text-[#2d1f0e]">データの取得に失敗しました</p>
-              <p className="mt-1 text-xs text-[#9a7250]">{error}</p>
+              <p className="text-sm font-medium text-[#1e3a5f]">データの取得に失敗しました</p>
+              <p className="mt-1 text-xs text-[#264a75]">{error}</p>
             </div>
           </div>
         )}
 
-        {/* 該当なし */}
+        {/* No Results */}
         {!isLoading && !error && filteredMembers.length === 0 && (
-          <div className="py-24 text-center bg-white rounded-2xl border border-dashed border-[#e8d5be]">
-            <p className="text-sm text-[#9a7250]">
+          <div className="py-24 text-center bg-white rounded-2xl border border-dashed border-[#ddd5c4]">
+            <p className="text-sm text-[#264a75]">
               該当するナナメンが見つかりません
             </p>
-            <p className="mt-2 text-xs text-[#c4a882]">
+            <p className="mt-2 text-xs text-[#c5a84a]">
               検索条件やカテゴリを変更してみてください。
             </p>
           </div>
         )}
 
-        {/* カードグリッド */}
+        {/* Card Grid */}
         {!isLoading && !error && filteredMembers.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredMembers.map((member, index) => (
-              <MemberCard key={member.id} member={member} index={index} />
+              <MemberCard
+                key={member.id}
+                member={member}
+                index={index}
+                onOpenDetail={setSelectedMember}
+              />
             ))}
           </div>
         )}
       </main>
 
-      {/* ─── フッター ─── */}
-      <footer className="border-t border-[#e8d5be] mt-16 bg-[#f5e4d0]/40">
+      {/* Footer */}
+      <footer className="border-t border-[#c5a84a]/30 mt-16 bg-[#1e3a5f]">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-[#2d1f0e] flex items-center justify-center">
-              <span
-                className="text-[6px] font-bold text-[#faf0e4]"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                SOFI
-              </span>
-            </div>
+            <Image
+              src="/images/sofi-logo.png"
+              alt="SOFI高等学院"
+              width={32}
+              height={32}
+              style={{ width: "auto", height: "32px" }}
+              className="shrink-0"
+            />
             <span
-              className="text-sm text-[#5c3d20]"
+              className="text-sm text-[#f5f0e6]"
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
               SOFI高等学院
             </span>
           </div>
-          <span
-            className="text-[10px] tracking-[0.3em] text-[#c4a882] uppercase"
-            style={{ fontFamily: "var(--font-montserrat)" }}
-          >
-            © 2024 SOFI HIGH SCHOOL
-          </span>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <span
+              className="text-xs text-[#c5a84a] italic"
+              style={{ fontFamily: "var(--font-montserrat)" }}
+            >
+              Stand out fit in
+            </span>
+            <span
+              className="text-[10px] tracking-[0.3em] text-[#f5f0e6]/60 uppercase"
+              style={{ fontFamily: "var(--font-montserrat)" }}
+            >
+              © 2024 SOFI HIGH SCHOOL
+            </span>
+          </div>
         </div>
       </footer>
+
+      {/* Detail Modal */}
+      <MemberDetailModal
+        member={selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
     </div>
   )
 }

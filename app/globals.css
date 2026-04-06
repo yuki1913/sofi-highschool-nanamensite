@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --cream-50: #fffdf9;
-  --cream-100: #faf0e4;
-  --cream-200: #f5e4d0;
-  --cream-300: #ebd4b8;
-  --orange-400: #f07840;
-  --orange-500: #e06530;
-  --brown-100: #e8d5be;
-  --brown-300: #c4a882;
-  --brown-500: #9a7250;
-  --brown-700: #5c3d20;
-  --brown-900: #2d1f0e;
+  /* SOFI Brand Colors */
+  --navy-900: #1e3a5f;
+  --navy-800: #264a75;
+  --navy-700: #2e5a8b;
+  --navy-600: #3a6d9e;
+  --gold-500: #c5a84a;
+  --gold-400: #d4b85a;
+  --gold-300: #e0c878;
+  --cream-50: #faf8f3;
+  --cream-100: #f5f0e6;
+  --cream-200: #ebe4d6;
+  --cream-300: #ddd5c4;
 
   --font-body: var(--font-noto-sans-jp), "Hiragino Sans", "游ゴシック体", YuGothic, sans-serif;
   --font-display: var(--font-zen-maru-gothic), "Hiragino Sans", sans-serif;
@@ -20,7 +21,7 @@
 
 @theme inline {
   --color-background: var(--cream-100);
-  --color-foreground: var(--brown-900);
+  --color-foreground: var(--navy-900);
   --font-sans: var(--font-body);
 }
 
@@ -36,7 +37,7 @@ html {
 
 body {
   background-color: var(--cream-100);
-  color: var(--brown-900);
+  color: var(--navy-900);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.7;
