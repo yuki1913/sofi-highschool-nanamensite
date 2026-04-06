@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, Minus } from "lucide-react"
 
 export type Member = {
   id: string
@@ -21,88 +21,80 @@ export function MemberCard({ member, index }: MemberCardProps) {
 
   return (
     <article
-      className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gray-200"
-      style={{
-        animationDelay: `${index * 60}ms`,
-        animationFillMode: "backwards",
-      }}
+      className="bg-white p-7 lg:p-8 flex flex-col gap-5 animate-fade-in-up transition-colors duration-200 hover:bg-[#f9f9f9]"
+      style={{ animationDelay: `${index * 50}ms` }}
     >
-      {/* 上部アクセントライン */}
-      <div className="h-[2px] w-full bg-gray-900" />
-
-      <div className="p-6">
-        {/* ヘッダー行 */}
-        <div className="mb-5 flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            {member.category && (
-              <span className="inline-block rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-[10px] font-medium tracking-widest text-gray-500 uppercase mb-3"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                {member.category}
-              </span>
-            )}
-            <h2
-              className="text-xl font-bold text-gray-900 leading-snug"
-              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
-            >
-              {member.name}
-            </h2>
-          </div>
-
-          {/* ID バッジ */}
-          <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white"
+      {/* 上部: 番号 + カテゴリ */}
+      <div className="flex items-center justify-between">
+        <span
+          className="text-[10px] tracking-[0.45em] text-black/30 uppercase tabular-nums"
+          style={{ fontFamily: "var(--font-montserrat)" }}
+        >
+          {String(member.id).padStart(2, "0")}
+        </span>
+        {member.category && (
+          <span
+            className="text-[9px] tracking-[0.35em] text-black/40 uppercase border border-black/15 px-2.5 py-1"
             style={{ fontFamily: "var(--font-montserrat)" }}
           >
-            {String(member.id).padStart(2, "0")}
-          </div>
-        </div>
+            {member.category}
+          </span>
+        )}
+      </div>
 
-        {/* 一言紹介 */}
+      {/* 名前 */}
+      <div>
+        <h2
+          className="text-2xl lg:text-[28px] font-medium leading-tight text-black"
+          style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+        >
+          {member.name}
+        </h2>
         {member.shortIntro && (
-          <p className="text-sm leading-6 text-gray-600 font-medium mb-4">
+          <p className="mt-2 text-[13px] leading-6 text-black/50">
             {member.shortIntro}
           </p>
         )}
+      </div>
 
-        {/* 区切り線 */}
-        <div className="my-4 h-px bg-gray-100" />
+      {/* 区切り */}
+      <div className="border-t border-black/8" />
 
-        {/* 詳細紹介 */}
-        <div className="relative">
+      {/* 本文 */}
+      {member.fullIntro && (
+        <div>
           <div
-            className={`overflow-hidden transition-all duration-300 ${
-              isExpanded ? "max-h-[600px]" : "max-h-[88px]"
+            className={`overflow-hidden transition-all duration-400 ease-in-out ${
+              isExpanded ? "max-h-[800px]" : "max-h-[72px]"
             }`}
           >
-            <p className="text-sm leading-7 text-gray-600">{member.fullIntro}</p>
+            <p className="text-[13px] leading-7 text-black/60 whitespace-pre-wrap">
+              {member.fullIntro}
+            </p>
           </div>
 
-          {!isExpanded && member.fullIntro.length > 90 && (
-            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent" />
+          {member.fullIntro.length > 80 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mt-4 flex items-center gap-2 group"
+            >
+              <span className="w-5 h-5 border border-black/20 flex items-center justify-center group-hover:border-black/60 transition-colors">
+                {isExpanded ? (
+                  <Minus className="w-2.5 h-2.5 text-black/40 group-hover:text-black/70" />
+                ) : (
+                  <Plus className="w-2.5 h-2.5 text-black/40 group-hover:text-black/70" />
+                )}
+              </span>
+              <span
+                className="text-[9px] tracking-[0.35em] text-black/35 uppercase group-hover:text-black/60 transition-colors"
+                style={{ fontFamily: "var(--font-montserrat)" }}
+              >
+                {isExpanded ? "CLOSE" : "READ MORE"}
+              </span>
+            </button>
           )}
         </div>
-
-        {member.fullIntro.length > 90 && (
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider text-gray-900 transition hover:text-gray-600 border-b border-gray-900 hover:border-gray-400 pb-0.5"
-            style={{ fontFamily: "var(--font-montserrat)" }}
-          >
-            {isExpanded ? (
-              <>
-                <span>閉じる</span>
-                <ChevronUp className="h-3.5 w-3.5" />
-              </>
-            ) : (
-              <>
-                <span>続きを読む</span>
-                <ChevronDown className="h-3.5 w-3.5" />
-              </>
-            )}
-          </button>
-        )}
-      </div>
+      )}
     </article>
   )
 }

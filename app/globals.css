@@ -1,20 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f0f0f;
-  --font-body: var(--font-noto-sans-jp), var(--font-zen-maru-gothic), "Hiragino Sans", sans-serif;
-  --font-heading: var(--font-montserrat), var(--font-zen-maru-gothic), sans-serif;
+  --cream-50: #fffdf9;
+  --cream-100: #faf0e4;
+  --cream-200: #f5e4d0;
+  --cream-300: #ebd4b8;
+  --orange-400: #f07840;
+  --orange-500: #e06530;
+  --brown-100: #e8d5be;
+  --brown-300: #c4a882;
+  --brown-500: #9a7250;
+  --brown-700: #5c3d20;
+  --brown-900: #2d1f0e;
+
+  --font-body: var(--font-noto-sans-jp), "Hiragino Sans", "游ゴシック体", YuGothic, sans-serif;
+  --font-display: var(--font-zen-maru-gothic), "Hiragino Sans", sans-serif;
+  --font-latin: var(--font-montserrat), sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--cream-100);
+  --color-foreground: var(--brown-900);
   --font-sans: var(--font-body);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--cream-100);
+  color: var(--brown-900);
   font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
