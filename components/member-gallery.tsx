@@ -129,11 +129,11 @@ export function MemberGallery() {
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-baseline gap-4">
             <h1
-              className="text-2xl font-medium text-[#1e3a5f]"
+              className="text-2xl font-medium"
               style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
             >
-              ナナメンを
-              <span className="ml-2" style={{ color: "#c5a84a" }}>紹介します</span>
+              <span style={{ color: "#1e3a5f" }}>ナナメン</span>
+              <span style={{ color: "#c5a84a" }}>紹介サイト</span>
             </h1>
             <p className="hidden sm:block text-xs text-[#264a75]">
               生徒と斜めの関係で向き合うSOFIのスタッフ・教員
