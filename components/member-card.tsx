@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Minus } from "lucide-react"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 export type Member = {
   id: string
@@ -21,21 +21,24 @@ export function MemberCard({ member, index }: MemberCardProps) {
 
   return (
     <article
-      className="bg-white p-7 lg:p-8 flex flex-col gap-5 animate-fade-in-up transition-colors duration-200 hover:bg-[#f9f9f9]"
-      style={{ animationDelay: `${index * 50}ms` }}
+      className="bg-white rounded-2xl p-6 lg:p-7 flex flex-col gap-4 animate-fade-in-up border border-[#f0e4d0] hover:border-[#f07840]/30 hover:shadow-md transition-all duration-300"
+      style={{
+        animationDelay: `${index * 50}ms`,
+        boxShadow: "0 2px 12px rgba(45, 31, 14, 0.06)",
+      }}
     >
       {/* 上部: 番号 + カテゴリ */}
       <div className="flex items-center justify-between">
         <span
-          className="text-[10px] tracking-[0.45em] text-black/30 uppercase tabular-nums"
+          className="text-[10px] tracking-[0.45em] text-[#c4a882] tabular-nums"
           style={{ fontFamily: "var(--font-montserrat)" }}
         >
           {String(member.id).padStart(2, "0")}
         </span>
         {member.category && (
           <span
-            className="text-[9px] tracking-[0.35em] text-black/40 uppercase border border-black/15 px-2.5 py-1"
-            style={{ fontFamily: "var(--font-montserrat)" }}
+            className="text-[10px] px-3 py-1 rounded-full bg-[#f07840]/10 text-[#f07840] font-medium"
+            style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
           >
             {member.category}
           </span>
@@ -45,30 +48,30 @@ export function MemberCard({ member, index }: MemberCardProps) {
       {/* 名前 */}
       <div>
         <h2
-          className="text-2xl lg:text-[28px] font-medium leading-tight text-black"
+          className="text-xl lg:text-2xl font-medium leading-tight text-[#2d1f0e]"
           style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
         >
           {member.name}
         </h2>
         {member.shortIntro && (
-          <p className="mt-2 text-[13px] leading-6 text-black/50">
+          <p className="mt-1.5 text-[13px] leading-6 text-[#9a7250]">
             {member.shortIntro}
           </p>
         )}
       </div>
 
       {/* 区切り */}
-      <div className="border-t border-black/8" />
+      <div className="border-t border-[#f0e4d0]" />
 
       {/* 本文 */}
       {member.fullIntro && (
         <div>
           <div
-            className={`overflow-hidden transition-all duration-400 ease-in-out ${
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
               isExpanded ? "max-h-[800px]" : "max-h-[72px]"
             }`}
           >
-            <p className="text-[13px] leading-7 text-black/60 whitespace-pre-wrap">
+            <p className="text-[13px] leading-7 text-[#5c3d20] whitespace-pre-wrap">
               {member.fullIntro}
             </p>
           </div>
@@ -76,20 +79,20 @@ export function MemberCard({ member, index }: MemberCardProps) {
           {member.fullIntro.length > 80 && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-4 flex items-center gap-2 group"
+              className="mt-3 flex items-center gap-1.5 group"
             >
-              <span className="w-5 h-5 border border-black/20 flex items-center justify-center group-hover:border-black/60 transition-colors">
+              <span className="w-6 h-6 rounded-full bg-[#faf0e4] flex items-center justify-center group-hover:bg-[#f07840]/10 transition-colors">
                 {isExpanded ? (
-                  <Minus className="w-2.5 h-2.5 text-black/40 group-hover:text-black/70" />
+                  <ChevronUp className="w-3 h-3 text-[#f07840]" />
                 ) : (
-                  <Plus className="w-2.5 h-2.5 text-black/40 group-hover:text-black/70" />
+                  <ChevronDown className="w-3 h-3 text-[#f07840]" />
                 )}
               </span>
               <span
-                className="text-[9px] tracking-[0.35em] text-black/35 uppercase group-hover:text-black/60 transition-colors"
-                style={{ fontFamily: "var(--font-montserrat)" }}
+                className="text-[11px] text-[#f07840] font-medium"
+                style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
               >
-                {isExpanded ? "CLOSE" : "READ MORE"}
+                {isExpanded ? "閉じる" : "もっと読む"}
               </span>
             </button>
           )}
