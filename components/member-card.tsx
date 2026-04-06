@@ -21,44 +21,61 @@ export function MemberCard({ member, index }: MemberCardProps) {
 
   return (
     <article
-      className="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+      className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gray-200"
       style={{
-        animationDelay: `${index * 80}ms`,
+        animationDelay: `${index * 60}ms`,
         animationFillMode: "backwards",
       }}
     >
-      <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-transparent via-amber-500/70 to-transparent" />
+      {/* 上部アクセントライン */}
+      <div className="h-[2px] w-full bg-gray-900" />
 
       <div className="p-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
-            <span className="inline-flex rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-[11px] font-medium tracking-wider text-amber-700">
-              {member.category || "カテゴリ未設定"}
-            </span>
-
-            <h2 className="mt-3 text-xl font-semibold text-stone-900">
+        {/* ヘッダー行 */}
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            {member.category && (
+              <span className="inline-block rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-[10px] font-medium tracking-widest text-gray-500 uppercase mb-3"
+                style={{ fontFamily: "var(--font-montserrat)" }}
+              >
+                {member.category}
+              </span>
+            )}
+            <h2
+              className="text-xl font-bold text-gray-900 leading-snug"
+              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            >
               {member.name}
             </h2>
-
-            <p className="mt-2 text-sm leading-6 text-stone-600">
-              {member.shortIntro}
-            </p>
           </div>
 
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-amber-300 text-sm font-semibold text-amber-700">
+          {/* ID バッジ */}
+          <div
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white"
+            style={{ fontFamily: "var(--font-montserrat)" }}
+          >
             {String(member.id).padStart(2, "0")}
           </div>
         </div>
 
-        <div className="my-4 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent" />
+        {/* 一言紹介 */}
+        {member.shortIntro && (
+          <p className="text-sm leading-6 text-gray-600 font-medium mb-4">
+            {member.shortIntro}
+          </p>
+        )}
 
+        {/* 区切り線 */}
+        <div className="my-4 h-px bg-gray-100" />
+
+        {/* 詳細紹介 */}
         <div className="relative">
           <div
             className={`overflow-hidden transition-all duration-300 ${
-              isExpanded ? "max-h-[500px]" : "max-h-[96px]"
+              isExpanded ? "max-h-[600px]" : "max-h-[88px]"
             }`}
           >
-            <p className="text-sm leading-7 text-stone-700">{member.fullIntro}</p>
+            <p className="text-sm leading-7 text-gray-600">{member.fullIntro}</p>
           </div>
 
           {!isExpanded && member.fullIntro.length > 90 && (
@@ -69,17 +86,18 @@ export function MemberCard({ member, index }: MemberCardProps) {
         {member.fullIntro.length > 90 && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-4 inline-flex items-center gap-2 text-xs font-medium tracking-wider text-amber-700 transition hover:text-amber-800"
+            className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider text-gray-900 transition hover:text-gray-600 border-b border-gray-900 hover:border-gray-400 pb-0.5"
+            style={{ fontFamily: "var(--font-montserrat)" }}
           >
             {isExpanded ? (
               <>
                 <span>閉じる</span>
-                <ChevronUp className="h-4 w-4" />
+                <ChevronUp className="h-3.5 w-3.5" />
               </>
             ) : (
               <>
                 <span>続きを読む</span>
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-3.5 w-3.5" />
               </>
             )}
           </button>
