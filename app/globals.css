@@ -68,12 +68,12 @@ body {
   padding: 0 !important;
   overflow: hidden;
   width: auto !important;
-  max-width: 280px !important;
+  max-width: 360px !important;
 }
 .leaflet-popup-content {
   margin: 0 !important;
   width: auto !important;
-  max-width: 280px !important;
+  max-width: 360px !important;
 }
 .leaflet-popup-tip-container {
   margin-top: -1px;

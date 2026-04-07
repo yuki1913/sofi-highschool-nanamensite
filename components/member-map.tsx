@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
@@ -16,9 +16,9 @@ type GeoPoint = {
 async function geocodeLocation(location: string): Promise<[number, number] | null> {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1`,
-      { headers: { "User-Agent": "SOFI-Nanamen-Site/1.0" } }
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1&accept-language=ja`
     )
+    if (!res.ok) return null
     const data = await res.json()
     if (data[0]) return [parseFloat(data[0].lat), parseFloat(data[0].lon)]
   } catch {}
@@ -52,56 +52,68 @@ function createMarkerIcon(count: number) {
 
 export function MemberMap({ members }: { members: Member[] }) {
   const [geoPoints, setGeoPoints] = useState<GeoPoint[]>([])
-  const [loading, setLoading] = useState(true)
+  const [geocoding, setGeocoding] = useState(false)
+  const cancelRef = useRef(false)
 
   useEffect(() => {
+    if (members.length === 0) return
+
+    // 前の effect のコールバックをキャンセル
+    cancelRef.current = false
+
     const locationMap = new Map<string, Member[]>()
     for (const m of members) {
       if (!m.location) continue
       locationMap.set(m.location, [...(locationMap.get(m.location) ?? []), m])
     }
 
-    Promise.all(
-      [...locationMap.entries()].map(async ([location, mems]) => {
-        const coords = await geocodeLocation(location)
-        if (!coords) return null
-        return { location, lat: coords[0], lng: coords[1], members: mems }
-      })
-    ).then((results) => {
-      setGeoPoints(results.filter((r): r is GeoPoint => r !== null))
-      setLoading(false)
-    })
-  }, [members])
+    const entries = [...locationMap.entries()]
+    if (entries.length === 0) return
 
-  if (loading) {
-    return (
-      <div
-        className="flex flex-col items-center justify-center gap-3 bg-white rounded-2xl border border-[#ddd5c4]"
-        style={{ height: "65vh", minHeight: 400 }}
-      >
-        <div className="w-10 h-10 rounded-full border-2 border-[#1e3a5f]/20 border-t-[#1e3a5f] animate-spin" />
-        <p
-          className="text-[10px] tracking-[0.4em] text-[#c5a84a] uppercase font-semibold"
-          style={{ fontFamily: "var(--font-montserrat)" }}
-        >
-          地図を読み込み中
-        </p>
-      </div>
-    )
-  }
+    setGeoPoints([])
+    setGeocoding(true)
+    let done = 0
+
+    entries.forEach(([location, mems]) => {
+      geocodeLocation(location).then((coords) => {
+        if (cancelRef.current) return
+        if (coords) {
+          setGeoPoints((prev) => [
+            ...prev,
+            { location, lat: coords[0], lng: coords[1], members: mems },
+          ])
+        }
+        done++
+        if (done === entries.length) setGeocoding(false)
+      })
+    })
+
+    return () => {
+      cancelRef.current = true
+    }
+  }, [members])
 
   return (
     <div
-      className="rounded-2xl overflow-hidden border border-[#ddd5c4]"
+      className="relative rounded-2xl overflow-hidden border border-[#ddd5c4]"
       style={{ height: "65vh", minHeight: 400, boxShadow: "0 4px 24px rgba(30,58,95,0.08)" }}
     >
+      {/* ジオコーディング中のオーバーレイ */}
+      {geocoding && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ddd5c4] shadow-sm">
+          <div className="w-3.5 h-3.5 rounded-full border-2 border-[#1e3a5f]/20 border-t-[#1e3a5f] animate-spin" />
+          <span className="text-[11px] text-[#1e3a5f] font-medium" style={{ fontFamily: "var(--font-zen-maru-gothic)" }}>
+            地点を読み込み中…
+          </span>
+        </div>
+      )}
+
       <MapContainer
         center={[36.5, 137.5]}
         zoom={5}
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom={true}
       >
-        {/* CartoDB Positron — クリーンなライトグレーの地図 */}
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -115,7 +127,7 @@ export function MemberMap({ members }: { members: Member[] }) {
             position={[point.lat, point.lng]}
             icon={createMarkerIcon(point.members.length)}
           >
-            <Popup maxWidth={280} autoPan>
+            <Popup maxWidth={360} autoPan>
               {/* ヘッダー */}
               <div style={{ padding: "10px 20px 8px", background: "#f5f0e6", borderBottom: "1px solid #ebe4d6", width: "100%" }}>
                 <p style={{ fontWeight: 700, color: "#1e3a5f", fontSize: 13, margin: 0, display: "flex", alignItems: "center", gap: 5 }}>
@@ -134,7 +146,6 @@ export function MemberMap({ members }: { members: Member[] }) {
                     key={m.id}
                     style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", borderBottom: "1px solid #f5f0e6" }}
                   >
-                    {/* 顔写真 or イニシャル */}
                     <div style={{
                       width: 52, height: 52, borderRadius: "50%", overflow: "hidden",
                       flexShrink: 0, background: "#eee8dc", border: "2px solid #c5a84a",
@@ -155,7 +166,6 @@ export function MemberMap({ members }: { members: Member[] }) {
                       )}
                     </div>
 
-                    {/* テキスト情報 */}
                     <div>
                       <p style={{ fontWeight: 700, color: "#1e3a5f", fontSize: 13, margin: "0 0 4px" }}>
                         {m.name}
