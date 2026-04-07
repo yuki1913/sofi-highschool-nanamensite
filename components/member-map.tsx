@@ -13,18 +13,6 @@ type GeoPoint = {
   members: Member[]
 }
 
-async function geocodeLocation(location: string): Promise<[number, number] | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1&accept-language=ja`
-    )
-    if (!res.ok) return null
-    const data = await res.json()
-    if (data[0]) return [parseFloat(data[0].lat), parseFloat(data[0].lon)]
-  } catch {}
-  return null
-}
-
 function createMarkerIcon(count: number) {
   return L.divIcon({
     html: `<div style="
@@ -58,35 +46,47 @@ export function MemberMap({ members }: { members: Member[] }) {
   useEffect(() => {
     if (members.length === 0) return
 
-    // 前の effect のコールバックをキャンセル
     cancelRef.current = false
 
+    // 場所ごとにメンバーをグループ化
     const locationMap = new Map<string, Member[]>()
     for (const m of members) {
       if (!m.location) continue
       locationMap.set(m.location, [...(locationMap.get(m.location) ?? []), m])
     }
 
-    const entries = [...locationMap.entries()]
-    if (entries.length === 0) return
+    const uniqueLocations = [...locationMap.keys()]
+    if (uniqueLocations.length === 0) return
 
     setGeoPoints([])
     setGeocoding(true)
-    let done = 0
 
-    entries.forEach(([location, mems]) => {
-      geocodeLocation(location).then((coords) => {
-        if (cancelRef.current) return
-        if (coords) {
-          setGeoPoints((prev) => [
-            ...prev,
-            { location, lat: coords[0], lng: coords[1], members: mems },
-          ])
-        }
-        done++
-        if (done === entries.length) setGeocoding(false)
-      })
+    // サーバー側 API で一括ジオコーディング
+    fetch("/api/geocode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locations: uniqueLocations }),
     })
+      .then((res) => res.json())
+      .then((coords: Record<string, [number, number]>) => {
+        if (cancelRef.current) return
+        const points: GeoPoint[] = []
+        for (const [location, mems] of locationMap.entries()) {
+          if (coords[location]) {
+            points.push({
+              location,
+              lat: coords[location][0],
+              lng: coords[location][1],
+              members: mems,
+            })
+          }
+        }
+        setGeoPoints(points)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelRef.current) setGeocoding(false)
+      })
 
     return () => {
       cancelRef.current = true
@@ -127,8 +127,7 @@ export function MemberMap({ members }: { members: Member[] }) {
             position={[point.lat, point.lng]}
             icon={createMarkerIcon(point.members.length)}
           >
-            <Popup maxWidth={360} autoPan>
-              {/* ヘッダー */}
+            <Popup maxWidth={400} autoPan>
               <div style={{ padding: "10px 20px 8px", background: "#f5f0e6", borderBottom: "1px solid #ebe4d6", width: "100%" }}>
                 <p style={{ fontWeight: 700, color: "#1e3a5f", fontSize: 13, margin: 0, display: "flex", alignItems: "center", gap: 5 }}>
                   <span style={{ color: "#c5a84a" }}>●</span>
@@ -139,7 +138,6 @@ export function MemberMap({ members }: { members: Member[] }) {
                 </p>
               </div>
 
-              {/* メンバー一覧 */}
               <div style={{ maxHeight: 300, overflowY: "auto", background: "#fff", width: "100%" }}>
                 {point.members.map((m) => (
                   <div

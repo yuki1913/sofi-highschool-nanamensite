@@ -67,13 +67,11 @@ body {
   border: 1px solid #ddd5c4;
   padding: 0 !important;
   overflow: hidden;
-  width: auto !important;
-  max-width: 360px !important;
+  width: 180px !important;
 }
 .leaflet-popup-content {
   margin: 0 !important;
-  width: auto !important;
-  max-width: 360px !important;
+  width: 180px !important;
 }
 .leaflet-popup-tip-container {
   margin-top: -1px;
