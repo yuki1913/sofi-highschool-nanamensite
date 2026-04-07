@@ -38,7 +38,7 @@ function createMarkerIcon(count: number) {
   })
 }
 
-export function MemberMap({ members }: { members: Member[] }) {
+export function MemberMap({ members, onOpenDetail }: { members: Member[]; onOpenDetail: (member: Member) => void }) {
   const [geoPoints, setGeoPoints] = useState<GeoPoint[]>([])
   const [geocoding, setGeocoding] = useState(false)
   const cancelRef = useRef(false)
@@ -142,7 +142,8 @@ export function MemberMap({ members }: { members: Member[] }) {
                 {point.members.map((m) => (
                   <div
                     key={m.id}
-                    style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", borderBottom: "1px solid #f5f0e6" }}
+                    onClick={() => onOpenDetail(m)}
+                    style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", borderBottom: "1px solid #f5f0e6", cursor: "pointer" }}
                   >
                     <div style={{
                       width: 52, height: 52, borderRadius: "50%", overflow: "hidden",

@@ -252,7 +252,7 @@ export function MemberGallery() {
 
             {/* ── マップタブ ── */}
             {activeTab === "map" && (
-              <MemberMap members={members} />
+              <MemberMap members={members} onOpenDetail={setSelectedMember} />
             )}
           </>
         )}
