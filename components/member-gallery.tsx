@@ -1,13 +1,19 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Loader2, AlertCircle, LogOut } from "lucide-react"
+import dynamic from "next/dynamic"
+import { Loader2, AlertCircle, LogOut, LayoutGrid, Map as MapIcon } from "lucide-react"
 import Image from "next/image"
 import { FilterBar } from "@/components/filter-bar"
 import { MemberCard } from "@/components/member-card"
 import { MemberDetailModal } from "@/components/member-detail-modal"
 import { logout } from "@/app/actions/auth"
 import type { Member } from "@/lib/zukan"
+
+const MemberMap = dynamic(
+  () => import("@/components/member-map").then((m) => m.MemberMap),
+  { ssr: false }
+)
 
 export function MemberGallery() {
   const [members, setMembers] = useState<Member[]>([])
@@ -17,6 +23,7 @@ export function MemberGallery() {
   const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [selectedHashtag, setSelectedHashtag] = useState("")
+  const [activeTab, setActiveTab] = useState<"gallery" | "map">("gallery")
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -151,26 +158,33 @@ export function MemberGallery() {
         <div className="max-w-[1280px] mx-auto px-6 lg:px-12">
           <div className="border-t border-[#c5a84a]/30" />
         </div>
+        {/* Tabs */}
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-12 pt-5 flex gap-2">
+          {(
+            [
+              { key: "gallery", label: "ナナメン一覧", icon: <LayoutGrid className="w-3.5 h-3.5" /> },
+              { key: "map", label: "世界マップ", icon: <MapIcon className="w-3.5 h-3.5" /> },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                activeTab === tab.key
+                  ? "bg-[#1e3a5f] text-[#f5f0e6] shadow-sm"
+                  : "bg-white border border-[#ddd5c4] text-[#264a75] hover:border-[#c5a84a]"
+              }`}
+              style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </section>
 
       {/* Filter & Content */}
       <main className="max-w-[1280px] mx-auto px-6 lg:px-12 py-8 lg:py-12">
-        {/* Filter Bar */}
-        {!isLoading && !error && members.length > 0 && (
-          <div className="mb-8">
-            <FilterBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={(cat) => setSelectedCategory(cat === selectedCategory ? "" : cat)}
-              hashtags={allHashtags}
-              selectedHashtag={selectedHashtag}
-              onHashtagChange={(tag) => setSelectedHashtag(tag === selectedHashtag ? "" : tag)}
-            />
-          </div>
-        )}
-
         {/* Loading */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
@@ -197,30 +211,50 @@ export function MemberGallery() {
           </div>
         )}
 
-        {/* No Results */}
-        {!isLoading && !error && filteredMembers.length === 0 && (
-          <div className="py-24 text-center bg-white rounded-2xl border border-dashed border-[#ddd5c4]">
-            <p className="text-sm text-[#264a75]">
-              該当するナナメンが見つかりません
-            </p>
-            <p className="mt-2 text-xs text-[#c5a84a]">
-              検索条件やカテゴリを変更してみてください。
-            </p>
-          </div>
-        )}
+        {!isLoading && !error && (
+          <>
+            {/* ── ギャラリータブ ── */}
+            {activeTab === "gallery" && (
+              <>
+                {members.length > 0 && (
+                  <div className="mb-8">
+                    <FilterBar
+                      searchQuery={searchQuery}
+                      onSearchChange={setSearchQuery}
+                      categories={categories}
+                      selectedCategory={selectedCategory}
+                      onCategoryChange={(cat) => setSelectedCategory(cat === selectedCategory ? "" : cat)}
+                      hashtags={allHashtags}
+                      selectedHashtag={selectedHashtag}
+                      onHashtagChange={(tag) => setSelectedHashtag(tag === selectedHashtag ? "" : tag)}
+                    />
+                  </div>
+                )}
+                {filteredMembers.length === 0 ? (
+                  <div className="py-24 text-center bg-white rounded-2xl border border-dashed border-[#ddd5c4]">
+                    <p className="text-sm text-[#264a75]">該当するナナメンが見つかりません</p>
+                    <p className="mt-2 text-xs text-[#c5a84a]">検索条件やカテゴリを変更してみてください。</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {filteredMembers.map((member, index) => (
+                      <MemberCard
+                        key={member.id}
+                        member={member}
+                        index={index}
+                        onOpenDetail={setSelectedMember}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
 
-        {/* Card Grid */}
-        {!isLoading && !error && filteredMembers.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredMembers.map((member, index) => (
-              <MemberCard
-                key={member.id}
-                member={member}
-                index={index}
-                onOpenDetail={setSelectedMember}
-              />
-            ))}
-          </div>
+            {/* ── マップタブ ── */}
+            {activeTab === "map" && (
+              <MemberMap members={members} />
+            )}
+          </>
         )}
       </main>
 
