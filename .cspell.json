@@ -17,6 +17,8 @@
     "nanamensite",
     "dbname",
     "sslmode",
-    "TIMESTAMPTZ"
+    "TIMESTAMPTZ",
+    "Carto",
+    "Nominatim"
   ]
 }
