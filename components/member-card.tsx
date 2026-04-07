@@ -12,6 +12,9 @@ export function MemberCard({ member, index, onOpenDetail }: MemberCardProps) {
   const hashtags = member.hashtags
     ? member.hashtags.split(/[,、\s]+/).filter(Boolean)
     : []
+  const careerTags = member.career
+    ? member.career.split(/,\s*/).filter(Boolean)
+    : []
 
   return (
     <article
@@ -100,14 +103,23 @@ export function MemberCard({ member, index, onOpenDetail }: MemberCardProps) {
           </p>
         )}
 
-        {/* Hashtags */}
-        {hashtags.length > 0 && (
+        {/* Hashtags (J列) + Career tags (K列) */}
+        {(hashtags.length > 0 || careerTags.length > 0) && (
           <div className="flex flex-wrap gap-1.5 mt-auto pt-2 border-t border-[#ddd5c4]/60">
             {hashtags.slice(0, 4).map((tag, i) => (
               <span
-                key={i}
-                className="text-[10px] px-2 py-0.5 rounded-full bg-[#1e3a5f]/8 text-[#1e3a5f] font-medium"
-                style={{ fontFamily: "var(--font-zen-maru-gothic)", background: "rgba(30,58,95,0.07)" }}
+                key={`h-${i}`}
+                className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                style={{ fontFamily: "var(--font-zen-maru-gothic)", background: "rgba(30,58,95,0.07)", color: "#1e3a5f" }}
+              >
+                #{tag}
+              </span>
+            ))}
+            {careerTags.slice(0, 3).map((tag, i) => (
+              <span
+                key={`c-${i}`}
+                className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                style={{ fontFamily: "var(--font-zen-maru-gothic)", background: "rgba(197,168,74,0.12)", color: "#9a7c2a" }}
               >
                 #{tag}
               </span>

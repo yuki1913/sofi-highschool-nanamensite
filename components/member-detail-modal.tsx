@@ -36,6 +36,9 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
   const hashtags = member.hashtags
     ? member.hashtags.split(/[,、\s]+/).filter(Boolean)
     : []
+  const careerTags = member.career
+    ? member.career.split(/,\s*/).filter(Boolean)
+    : []
 
   return (
     <div
@@ -143,28 +146,43 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             </Section>
           )}
 
-          {/* Career */}
-          {member.career && (
+          {/* Career tags (K列) */}
+          {careerTags.length > 0 && (
             <Section label="こんな進路や相談にのれるよ！">
-              <p className="text-[13px] leading-7 text-[#264a75] whitespace-pre-wrap">
-                {member.career}
-              </p>
+              <div className="flex flex-wrap gap-2">
+                {careerTags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="text-[11px] px-3 py-1 rounded-full font-medium"
+                    style={{
+                      fontFamily: "var(--font-zen-maru-gothic)",
+                      background: "rgba(197,168,74,0.12)",
+                      color: "#9a7c2a",
+                      border: "1px solid rgba(197,168,74,0.4)",
+                    }}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </Section>
           )}
 
-          {/* Hashtags */}
+          {/* Hashtags (J列) */}
           {hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {hashtags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="text-[11px] px-3 py-1 rounded-full border border-[#c5a84a]/50 text-[#1e3a5f] font-medium"
-                  style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
+            <Section label="マイ#">
+              <div className="flex flex-wrap gap-2">
+                {hashtags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="text-[11px] px-3 py-1 rounded-full border border-[#c5a84a]/50 text-[#1e3a5f] font-medium"
+                    style={{ fontFamily: "var(--font-zen-maru-gothic)" }}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </Section>
           )}
 
           {/* URL */}
