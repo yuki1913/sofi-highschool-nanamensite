@@ -4,6 +4,7 @@ import {
   Zen_Maru_Gothic,
   Montserrat,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -24,7 +25,6 @@ const montserrat = Montserrat({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-
 export const metadata: Metadata = {
   title: "ナナメン紹介 | SOFI高等学院",
   description:
@@ -41,7 +41,10 @@ export default function RootLayout({
       lang="ja"
       className={`${notoSansJP.variable} ${zenMaruGothic.variable} ${montserrat.variable} antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
