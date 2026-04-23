@@ -66,7 +66,7 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
         </button>
 
         {/* Photo header */}
-        <div className="relative w-full aspect-[16/7] bg-[#eee8dc] overflow-hidden rounded-t-3xl">
+        <div className="relative w-full aspect-[16/6] bg-[#eee8dc] overflow-hidden rounded-t-3xl">
           {member.imageUrl ? (
             <img
               src={member.imageUrl}
@@ -113,7 +113,7 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
         </div>
 
         {/* Content */}
-        <div className="p-6 sm:p-8 flex flex-col gap-6">
+        <div className="p-6 sm:p-8 flex flex-col gap-4">
           {/* Motto */}
           {member.motto && (
             <div className="border-l-2 border-[#c5a84a] pl-4">
@@ -127,7 +127,7 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
           )}
 
           {/* Info grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {member.university && (
               <InfoItem
                 icon={<GraduationCap className="w-3.5 h-3.5" />}
@@ -254,7 +254,7 @@ function InfoItem({
   value: string
 }) {
   return (
-    <div className="bg-white rounded-xl px-4 py-3 border border-[#ddd5c4]">
+    <div className="bg-white rounded-xl px-3 py-2 border border-[#ddd5c4]">
       <p
         className="text-[10px] tracking-[0.3em] text-[#c5a84a] uppercase font-semibold mb-1"
         style={{ fontFamily: "var(--font-montserrat)" }}
