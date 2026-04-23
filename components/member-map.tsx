@@ -70,21 +70,18 @@ export function MemberMap({ members, onOpenDetail }: { members: Member[]; onOpen
       .then((res) => res.json())
       .then((coords: Record<string, [number, number]>) => {
         if (cancelRef.current) return
-        // 座標をキーにしてグループを統合（同じ座標に複数マーカーが重なるのを防ぐ）
-        const coordMap = new Map<string, GeoPoint>()
+        const points: GeoPoint[] = []
         for (const [location, mems] of locationMap.entries()) {
-          if (!coords[location]) continue
-          const [lat, lng] = coords[location]
-          const key = `${lat},${lng}`
-          const existing = coordMap.get(key)
-          if (existing) {
-            existing.members.push(...mems)
-            existing.location = existing.location === location ? existing.location : `${existing.location}・${location}`
-          } else {
-            coordMap.set(key, { location, lat, lng, members: [...mems] })
+          if (coords[location]) {
+            points.push({
+              location,
+              lat: coords[location][0],
+              lng: coords[location][1],
+              members: mems,
+            })
           }
         }
-        setGeoPoints([...coordMap.values()])
+        setGeoPoints(points)
       })
       .catch(() => {})
       .finally(() => {

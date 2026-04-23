@@ -39,6 +39,9 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
   const careerTags = member.career
     ? member.career.split(/,\s*/).filter(Boolean)
     : []
+  const questions = member.questions
+    ? [...member.questions.matchAll(/「([^」]+)」/g)].map((m) => m[1])
+    : []
 
   return (
     <div
@@ -135,6 +138,9 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             {member.faculty && (
               <InfoItem label="学部" value={member.faculty} />
             )}
+            {member.mbti && (
+              <InfoItem label="MBTI" value={member.mbti} />
+            )}
           </div>
 
           {/* Skills */}
@@ -180,6 +186,26 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
                   >
                     #{tag}
                   </span>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* 質問に困ったら？ */}
+          {questions.length > 0 && (
+            <Section label="質問に困ったら？">
+              <div className="flex flex-col gap-2">
+                {questions.map((q, i) => (
+                  <div
+                    key={i}
+                    className="rounded-xl px-4 py-3 text-[13px] text-[#1e3a5f] font-medium border border-[#c5a84a]/40"
+                    style={{
+                      fontFamily: "var(--font-zen-maru-gothic)",
+                      background: "rgba(197,168,74,0.07)",
+                    }}
+                  >
+                    「{q}」
+                  </div>
                 ))}
               </div>
             </Section>

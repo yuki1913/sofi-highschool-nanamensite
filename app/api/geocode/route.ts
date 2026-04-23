@@ -55,9 +55,15 @@ const KNOWN_LOCATIONS: [string, number, number][] = [
   ["京都", 35.0116, 135.7681],
   ["大阪", 34.6937, 135.5023],
   ["神戸", 34.6901, 135.1956],
-  ["兵庫", 34.6901, 135.1956],
-  ["明石", 34.6432, 134.9973],
+  ["西宮", 34.7373, 135.3410],
+  ["尼崎", 34.7335, 135.4064],
+  ["芦屋", 34.7281, 135.3039],
+  ["宝塚", 34.7988, 135.3594],
+  ["伊丹", 34.7848, 135.4005],
+  ["加古川", 34.7570, 134.8446],
   ["姫路", 34.8154, 134.6856],
+  ["明石", 34.6432, 134.9973],
+  ["兵庫", 34.6901, 135.1956],
   ["奈良", 34.6851, 135.8049],
   ["和歌山", 34.2260, 135.1675],
   // 中国・四国
@@ -103,7 +109,18 @@ const KNOWN_LOCATIONS: [string, number, number][] = [
 
 /** ローカルテーブルでキーワードマッチ */
 function lookupLocal(location: string): [number, number] | null {
-  for (const [keyword, lat, lng] of KNOWN_LOCATIONS) {
+  const sorted = [...KNOWN_LOCATIONS].sort((a, b) => b[0].length - a[0].length)
+
+  // 「兵庫県神戸市」→「神戸市」のように都道府県部分を除いて市名だけで先にマッチ
+  const cityPart = location.replace(/^.{2,4}[都道府県]/, "")
+  if (cityPart && cityPart !== location) {
+    for (const [keyword, lat, lng] of sorted) {
+      if (cityPart.includes(keyword)) return [lat, lng]
+    }
+  }
+
+  // 市名でマッチしなかった場合は文字列全体でマッチ（都道府県のみの表記など）
+  for (const [keyword, lat, lng] of sorted) {
     if (location.includes(keyword)) return [lat, lng]
   }
   return null
