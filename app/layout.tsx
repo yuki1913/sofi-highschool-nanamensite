@@ -41,7 +41,7 @@ export default function RootLayout({
       lang="ja"
       className={`${notoSansJP.variable} ${zenMaruGothic.variable} ${montserrat.variable} antialiased`}
     >
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <Analytics />
       </body>
